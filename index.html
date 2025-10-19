@@ -54,6 +54,18 @@
       <p class="mt-3 text-gray-700 font-medium">Memuat dashboard...</p>
     </div>
   </div>
+  <!-- Header: logos left and right -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between py-3">
+      <div class="flex items-center gap-3">
+  <img id="logoLeft" src="assets/Logo-Monterrat Ex Bold.png" alt="Logo kiri" class="h-10 w-auto object-contain" />
+      </div>
+      <div class="flex items-center gap-3">
+  <img id="logoRight" src="assets/WhatsApp Image 2025-10-19 at 22.33.15_a0642850.jpg" alt="Logo kanan" class="h-10 w-auto object-contain rounded-md" />
+      </div>
+    </div>
+  </div>
+
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-2 gap-4">
 
     <!-- 🔹 KIRI ATAS (Dashboard Ringkas now here) -->
@@ -383,6 +395,8 @@
     overlay.classList.remove('hidden');
     try {
       await loadDashboard();
+      // adjust logo sizes proportionally after images load
+      try { adjustLogoSizes(); } catch (e) { /* ignore */ }
       // Jika URL memiliki parameter id, isi input dan jalankan cariAC
       const params = new URLSearchParams(window.location.search);
       const idParam = params.get('id');
@@ -402,6 +416,32 @@
   window.onload = () => {
     initialLoad();
   };
+
+  // Adjust logo display heights proportionally based on natural sizes
+  function adjustLogoSizes() {
+    const left = document.getElementById('logoLeft');
+    const right = document.getElementById('logoRight');
+    if (!left || !right) return;
+    // If images already loaded, use naturalHeight; otherwise wait briefly
+    const setSizes = () => {
+      const lh = left.naturalHeight || 1;
+      const rw = right.naturalHeight || 1;
+      // target max height for left image
+      const base = 40; // px
+      // scale right image to have same visual weight relative to its natural size
+      left.style.height = base + 'px';
+      // adjust right height proportionally
+      const rightHeight = Math.max(28, Math.round(base * (rw / lh)));
+      right.style.height = rightHeight + 'px';
+    };
+    if (left.complete && right.complete) setSizes();
+    else {
+      left.addEventListener('load', setSizes, { once: true });
+      right.addEventListener('load', setSizes, { once: true });
+      // fallback
+      setTimeout(setSizes, 500);
+    }
+  }
 
 
 </script>
