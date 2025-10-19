@@ -104,9 +104,11 @@
 
     <!-- 🔹 KIRI BAWAH (QR Card moved here) -->
   <div class="bg-white rounded-3xl shadow p-4 qr-card">
-      <img id="qrImage"
-        src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=AC-RS1-001"
-        alt="QR Code">
+      <a id="qrLink" href="#" target="_blank" rel="noopener">
+        <img id="qrImage"
+          src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=AC-RS1-001"
+          alt="QR Code">
+      </a>
       <p id="qrText">AC-RS1-001</p>
     </div>
 
@@ -323,10 +325,14 @@
       document.getElementById("ampereKompresor").innerText = ac["Ampere Kompresor"] || '-';
       document.getElementById("kondisiFilter").innerText = ac["Kondisi Filter"] || '-';
 
-      // Update QR
-      document.getElementById("qrImage").src =
-        `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${id}`;
+      // Update QR (image + link)
+      const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(window.location.origin + window.location.pathname + '?id=' + id)}`;
+      document.getElementById("qrImage").src = qrUrl;
       document.getElementById("qrText").innerText = id;
+      const qrLink = document.getElementById('qrLink');
+      if (qrLink) {
+        qrLink.href = window.location.origin + window.location.pathname + '?id=' + encodeURIComponent(id);
+      }
 
     } catch (err) {
       console.error("CariAC error:", err);
@@ -358,6 +364,9 @@
         el.innerText = '-';
       }
     });
+    // reset qr link too
+    const qrLinkEl = document.getElementById('qrLink');
+    if (qrLinkEl) qrLinkEl.href = '#';
   }
   
   // 🔹 Jalankan pencarian saat tekan Enter di input ID_AC
@@ -374,6 +383,15 @@
     overlay.classList.remove('hidden');
     try {
       await loadDashboard();
+      // Jika URL memiliki parameter id, isi input dan jalankan cariAC
+      const params = new URLSearchParams(window.location.search);
+      const idParam = params.get('id');
+      if (idParam) {
+        const input = document.getElementById('idInput');
+        if (input) input.value = idParam;
+        // jalankan cariAC dan tunggu selesai
+        await cariAC();
+      }
       setInterval(loadDashboard, 300000);
     } finally {
       overlay.classList.add('hidden');
