@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard Monitoring AC RSUD</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="script.js"></script>
+</head>
+<body class="bg-gray-50 font-[Poppins] p-4">
+
+  <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-4">
+    
+    <!-- Kartu kiri atas -->
+    <div class="bg-white rounded-2xl shadow p-4 flex flex-col items-center justify-center text-center">
+      <img src="./assets/qr-sample.png" alt="QR Code" class="w-32 h-32 mb-2">
+      <p id="ac-id-display" class="text-lg font-semibold text-gray-700">Pilih ID AC</p>
+    </div>
+
+    <!-- Panel kanan atas -->
+    <div class="bg-white rounded-2xl shadow p-4">
+      <h2 class="text-xl font-semibold mb-2">Informasi Detail AC</h2>
+      <div id="ac-detail" class="space-y-2 text-gray-700">
+        <p><strong>Kode AC:</strong> -</p>
+        <p><strong>Lokasi:</strong> -</p>
+        <p><strong>Merek:</strong> -</p>
+        <p><strong>Kondisi Terakhir:</strong> -</p>
+        <p><strong>Service Terakhir:</strong> -</p>
+        <p><strong>Teknisi:</strong> -</p>
+        <p><strong>Jadwal Berikut:</strong> -</p>
+      </div>
+      <button id="btnFoto" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700 transition">Lihat Foto Terakhir</button>
+    </div>
+
+    <!-- Form kiri bawah -->
+    <div class="bg-white rounded-2xl shadow p-4">
+      <h2 class="text-xl font-semibold mb-4">Form Maintenance AC RSUD</h2>
+
+      <div class="mb-3">
+        <label class="block text-sm font-medium mb-1">Cari ID_AC</label>
+        <div class="flex gap-2">
+          <input id="searchId" type="text" placeholder="Misal: AC-RS1-001" class="border rounded-xl p-2 flex-1">
+          <button id="btnCari" class="bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700 transition">Cari</button>
+        </div>
+      </div>
+
+      <div class="space-y-2 text-gray-700 text-sm" id="hasilCari">
+        <p><strong>Tekanan Freon:</strong> -</p>
+        <p><strong>Suhu Keluar:</strong> -</p>
+        <p><strong>Ampere Kompresor:</strong> -</p>
+        <p><strong>Kondisi Filter:</strong> -</p>
+      </div>
+    </div>
+
+    <!-- Dashboard kanan bawah -->
+    <div class="bg-white rounded-2xl shadow p-4">
+      <h2 class="text-xl font-semibold mb-4">Dashboard Ringkas</h2>
+      <div id="dashboard-summary" class="grid grid-cols-2 gap-4 text-center">
+        <div class="p-3 bg-blue-50 rounded-xl shadow-sm">
+          <p class="text-sm">Total AC</p>
+          <p id="total-ac" class="text-2xl font-bold">0</p>
+        </div>
+        <div class="p-3 bg-red-50 rounded-xl shadow-sm">
+          <p class="text-sm">AC Bermasalah</p>
+          <p id="ac-broken" class="text-2xl font-bold">0</p>
+        </div>
+        <div class="p-3 bg-yellow-50 rounded-xl shadow-sm">
+          <p class="text-sm">Belum Diservice >3 Bulan</p>
+          <p id="ac-delay" class="text-2xl font-bold">0</p>
+        </div>
+        <div class="p-3 bg-green-50 rounded-xl shadow-sm">
+          <p class="text-sm">Jumlah Teknisi</p>
+          <p id="total-tech" class="text-2xl font-bold">0</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>

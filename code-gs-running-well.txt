@@ -1,0 +1,52 @@
+function doGet(e) {
+  try {
+    const ss = SpreadsheetApp.openById('1h9XI0xzscDBvEcYHI68lPZ1NQ2AoBeuw73Ztx3uAn38');
+    const sheet = ss.getSheetByName('Data AC');
+    const data = sheet.getDataRange().getValues();
+    const headers = data.shift();
+
+    const rows = data.map(r => {
+      let obj = {};
+      headers.forEach((h, i) => obj[h] = r[i]);
+      return obj;
+    });
+
+    const id = e.parameter.id;
+    if (id) {
+      const found = rows.find(r => r.ID_AC === id);
+      return ContentService.createTextOutput(JSON.stringify(found || {}))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+
+    const now = new Date();
+    const totalAC = rows.length;
+    const bermasalah = rows.filter(r =>
+      (r['Kondisi Terakhir'] + '').toLowerCase().includes('buruk')
+    ).length;
+
+    const belumDiservice = rows.filter(r => {
+      const lastService = new Date(r['Service Terakhir']);
+      const diffBulan = (now - lastService) / (1000 * 60 * 60 * 24 * 30);
+      return diffBulan > 3;
+    }).length;
+
+    const teknisiSet = new Set(rows.map(r => r['Teknisi']));
+    const totalTeknisi = teknisiSet.size;
+
+    const result = {
+      data: rows,
+      summary: {
+        totalAC,
+        bermasalah,
+        belumDiservice,
+        totalTeknisi
+      }
+    };
+
+    return ContentService.createTextOutput(JSON.stringify(result))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch (err) {
+    return ContentService.createTextOutput(JSON.stringify({ error: err.message }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}

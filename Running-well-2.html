@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard AC RSUD</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen p-6">
+  <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
+
+    <!-- 🔹 KIRI ATAS -->
+    <div class="bg-white rounded-3xl shadow p-6 text-center">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=AC-RS1-001"
+           alt="QR Code" class="mx-auto mb-4 w-32 h-32">
+      <p class="text-lg font-semibold" id="qrText">AC-RS1-001</p>
+    </div>
+
+    <!-- 🔹 KANAN ATAS -->
+    <div class="bg-white rounded-3xl shadow p-6">
+      <h2 class="text-xl font-bold mb-4">Informasi Detail AC</h2>
+      <div class="space-y-1 text-gray-700">
+        <p><b>Kode AC:</b> <span id="kodeAC">-</span></p>
+        <p><b>Lokasi:</b> <span id="lokasiAC">-</span></p>
+        <p><b>Merek:</b> <span id="merekAC">-</span></p>
+        <p><b>Kondisi Terakhir:</b> <span id="kondisiAC">-</span></p>
+        <p><b>Service Terakhir:</b> <span id="serviceTerakhir">-</span></p>
+        <p><b>Teknisi:</b> <span id="teknisiAC">-</span></p>
+        <p><b>Jadwal Berikut:</b> <span id="jadwalBerikut">-</span></p>
+      </div>
+      <button class="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2 rounded-xl">
+        Lihat Foto Terakhir
+      </button>
+    </div>
+
+    <!-- 🔹 KIRI BAWAH -->
+    <div class="bg-white rounded-3xl shadow p-6">
+      <h2 class="text-lg font-bold mb-3">Form Maintenance AC RSUD</h2>
+      <label for="idInput" class="block mb-2">Cari ID_AC</label>
+      <div class="flex gap-2 mb-4">
+        <input id="idInput" type="text" placeholder="AC-RS1-001"
+          class="border p-2 rounded w-full focus:ring focus:ring-blue-300">
+        <button onclick="cariAC()"
+          class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">Cari</button>
+      </div>
+      <div class="space-y-1 text-gray-700">
+        <p><b>Tekanan Freon:</b> <span id="tekananFreon">-</span></p>
+        <p><b>Suhu Keluar:</b> <span id="suhuKeluar">-</span></p>
+        <p><b>Ampere Kompresor:</b> <span id="ampereKompresor">-</span></p>
+        <p><b>Kondisi Filter:</b> <span id="kondisiFilter">-</span></p>
+      </div>
+    </div>
+
+    <!-- 🔹 KANAN BAWAH -->
+    <div class="bg-white rounded-3xl shadow p-6">
+      <h2 class="text-xl font-bold mb-4">Dashboard Ringkas</h2>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="bg-blue-100 p-4 rounded-2xl text-center shadow-inner">
+          <p>Total AC</p>
+          <h2 id="totalAC" class="text-2xl font-bold">0</h2>
+        </div>
+        <div class="bg-red-100 p-4 rounded-2xl text-center shadow-inner">
+          <p>AC Bermasalah</p>
+          <h2 id="acBermasalah" class="text-2xl font-bold">0</h2>
+        </div>
+        <div class="bg-yellow-100 p-4 rounded-2xl text-center shadow-inner">
+          <p>Belum Diservice >3 Bulan</p>
+          <h2 id="belumDiservice" class="text-2xl font-bold">0</h2>
+        </div>
+        <div class="bg-green-100 p-4 rounded-2xl text-center shadow-inner">
+          <p>Jumlah Teknisi</p>
+          <h2 id="totalTeknisi" class="text-2xl font-bold">0</h2>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbynH2oMX1UtowgZt33Q_VmaQt-tdC1xRbCCYK-4DCetSmS0Ff-uqJa-4BZWGGAsbDDq/exec'; // Ganti dengan URL Web App kamu
+
+    async function loadDashboard() {
+      try {
+        const res = await fetch(SCRIPT_URL);
+        const result = await res.json();
+
+        document.getElementById("totalAC").innerText = result.summary.totalAC;
+        document.getElementById("acBermasalah").innerText = result.summary.bermasalah;
+        document.getElementById("belumDiservice").innerText = result.summary.belumDiservice;
+        document.getElementById("totalTeknisi").innerText = result.summary.totalTeknisi;
+      } catch (err) {
+        console.error(err);
+        alert("Gagal memuat data dashboard!");
+      }
+    }
+
+    async function cariAC() {
+      const id = document.getElementById("idInput").value.trim();
+      if (!id) return alert("Masukkan ID_AC terlebih dahulu!");
+
+      try {
+        const res = await fetch(`${SCRIPT_URL}?id=${id}`);
+        const ac = await res.json();
+
+        if (!ac || !ac.ID_AC) return alert("Data tidak ditemukan!");
+
+        // Update detail AC
+        document.getElementById("kodeAC").innerText = ac.ID_AC || '-';
+        document.getElementById("lokasiAC").innerText = ac.Lokasi || '-';
+        document.getElementById("merekAC").innerText = ac.Merek || '-';
+        document.getElementById("kondisiAC").innerText = ac["Kondisi Terakhir"] || '-';
+        document.getElementById("serviceTerakhir").innerText = ac["Service Terakhir"] || '-';
+        document.getElementById("teknisiAC").innerText = ac.Teknisi || '-';
+        document.getElementById("jadwalBerikut").innerText = ac["Jadwal Berikut"] || '-';
+
+        // Update form bawah
+        document.getElementById("tekananFreon").innerText = ac["Tekanan Freon"] || '-';
+        document.getElementById("suhuKeluar").innerText = ac["Suhu Keluar"] || '-';
+        document.getElementById("ampereKompresor").innerText = ac["Ampere Kompresor"] || '-';
+        document.getElementById("kondisiFilter").innerText = ac["Kondisi Filter"] || '-';
+
+        // Update QR
+        document.querySelector("img").src = `https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${id}`;
+        document.getElementById("qrText").innerText = id;
+      } catch (err) {
+        console.error(err);
+        alert("Gagal mencari data!");
+      }
+    }
+
+    window.onload = loadDashboard;
+  </script>
+</body>
+</html>
